@@ -104,7 +104,7 @@ describe('UsersService', () => {
     expect(loginResult).toHaveProperty('token');
     expect(mockJwtService.signAsync).toHaveBeenCalledWith({
       email: 'testuser@testuser.com',
-      sub: 1,
+      id: 1,
     });
   });
 
