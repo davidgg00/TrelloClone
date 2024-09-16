@@ -1,5 +1,12 @@
+import { List } from 'src/list/entities/list.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Board {
@@ -14,4 +21,7 @@ export class Board {
 
   @ManyToOne(() => User, (user) => user.boards, { nullable: false })
   created_by: User;
+
+  @OneToMany(() => List, (list) => list.board)
+  lists: List[];
 }

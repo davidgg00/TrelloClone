@@ -23,9 +23,7 @@ export class BoardsController {
   async create(@Body() createBoardDto: CreateBoardDto, @Request() req: any) {
     const user = req.user;
 
-    const test = await this.boardsService.create(createBoardDto, user);
-    console.log(test);
-    return test;
+    return await this.boardsService.create(createBoardDto, user);
   }
 
   @UseGuards(JwtAuthGuard)
