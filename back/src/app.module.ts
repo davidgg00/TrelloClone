@@ -7,6 +7,8 @@ import { UsersModule } from './users/users.module';
 import { BoardsModule } from './boards/boards.module';
 import { AuthModule } from './auth/auth.module';
 import { ListModule } from './list/list.module';
+import { TasksModule } from './tasks/tasks.module';
+import { BoardPermissionModule } from './board-permission/board-permission.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { ListModule } from './list/list.module';
     BoardsModule,
     AuthModule,
     ListModule,
+    TasksModule,
+    BoardPermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

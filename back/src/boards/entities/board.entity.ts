@@ -1,3 +1,4 @@
+import { BoardPermission } from 'src/board-permission/entities/board-permission.entity';
 import { List } from 'src/list/entities/list.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -24,4 +25,7 @@ export class Board {
 
   @OneToMany(() => List, (list) => list.board)
   lists: List[];
+
+  @OneToMany(() => BoardPermission, (permission) => permission.board)
+  permissions: BoardPermission[];
 }

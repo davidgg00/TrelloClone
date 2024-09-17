@@ -79,6 +79,8 @@ describe('BoardsController', () => {
       name: 'test',
       password: 'password',
       boards: [],
+      tasks: [],
+      permissions: [],
     };
 
     const createdBoard = {
@@ -131,6 +133,8 @@ describe('BoardsController', () => {
       name: 'test',
       password: 'password',
       boards: [],
+      tasks: [],
+      permissions: [],
     };
 
     const boardId = 1;
@@ -157,6 +161,8 @@ describe('BoardsController', () => {
       name: 'test',
       password: 'password',
       boards: [],
+      tasks: [],
+      permissions: [],
     };
 
     const boardId = 1;
@@ -199,6 +205,8 @@ describe('BoardsController', () => {
       name: 'test',
       password: 'password',
       boards: [],
+      tasks: [],
+      permissions: [],
     };
 
     const boardId = 1;

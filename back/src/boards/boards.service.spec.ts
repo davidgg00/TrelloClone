@@ -46,6 +46,8 @@ describe('BoardsService', () => {
       name: 'test',
       password: 'password',
       boards: [],
+      tasks: [],
+      permissions: [],
     };
 
     const expectedBoard = {
@@ -69,6 +71,8 @@ describe('BoardsService', () => {
       name: 'test',
       password: 'password',
       boards: [],
+      tasks: [],
+      permissions: [],
     };
 
     const expectedBoards = [
@@ -104,6 +108,8 @@ describe('BoardsService', () => {
       name: 'test',
       password: 'password',
       boards: [],
+      tasks: [],
+      permissions: [],
     };
 
     const boardId = 1;
@@ -133,6 +139,8 @@ describe('BoardsService', () => {
       name: 'test',
       password: 'password',
       boards: [],
+      tasks: [],
+      permissions: [],
     };
     const boardId = 1;
 
@@ -152,6 +160,8 @@ describe('BoardsService', () => {
       name: 'test',
       password: 'password',
       boards: [],
+      tasks: [],
+      permissions: [],
     };
 
     const boardId = 1;
