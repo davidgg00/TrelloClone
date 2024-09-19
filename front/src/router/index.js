@@ -20,7 +20,8 @@ const routes = [
     component: DashboardView,
     beforeEnter: (to, from, next) => {
       if (!isAuthenticated()) {
-        next("/login");
+        next();
+        /* next("/login"); */
       } else {
         next();
       }
