@@ -2,13 +2,36 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LoginView from "../views/LoginView.vue";
 import DashboardView from "../views/DashboardView.vue";
+import { validToken } from "../api/auth.api";
 
-// Simulación de autenticación (puedes cambiarlo a algo real)
-const isAuthenticated = () => !!localStorage.getItem("auth");
+const isAuthenticated = async () => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await validToken(token);
+    if (response.validToken) {
+      return true;
+    }
+  } catch (error) {
+    console.log(false);
+  }
+  return false;
+};
 
 const routes = [
   { path: "/", redirect: "/login" },
-  { path: "/login", name: "Login", component: LoginView },
+  {
+    path: "/login",
+    name: "Login",
+    component: LoginView,
+    beforeEnter: async (to, from, next) => {
+      const resp = await isAuthenticated();
+      if (resp) {
+        next("/dashboard");
+      } else {
+        next();
+      }
+    },
+  },
   {
     path: "/register",
     name: "Register",
@@ -18,10 +41,10 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: DashboardView,
-    beforeEnter: (to, from, next) => {
-      if (!isAuthenticated()) {
-        next();
-        /* next("/login"); */
+    beforeEnter: async (to, from, next) => {
+      const resp = await isAuthenticated();
+      if (!resp) {
+        next("/login");
       } else {
         next();
       }

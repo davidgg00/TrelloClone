@@ -54,4 +54,18 @@ export class UsersService {
 
     return { token };
   }
+
+  async checkToken(token: string) {
+    try {
+      const payload = this.jwtService.verify(token);
+
+      if (!payload) {
+        throw new UnauthorizedException('Invalid token');
+      }
+
+      return { validToken: true };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
 }

@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { login } from '../api/auth.api';
+import { useRouter } from 'vue-router';
 
-// Define state variables for the form
 const email = ref<string>('');
 const password = ref<string>('');
+const router = useRouter();
 
-// Login handling function (simulation)
-const handleLogin = () => {
-    console.log('Email:', email.value);
-    console.log('Password:', password.value);
-    alert('You have logged in successfully.');
+const handleLogin = async () => {
+    const { token } = await login({ email: email.value, password: password.value });
+    localStorage.setItem('token', token);
+    router.push('/dashboard');
 };
 </script>
 
@@ -18,15 +19,12 @@ const handleLogin = () => {
         style="background-image: url('/path/to/your/image.jpg')">
         <div class="flex flex-col items-center bg-white bg-opacity-90 shadow-2xl rounded-2xl p-10 max-w-xl w-full">
 
-            <!-- Image instead of the title -->
             <img src="../assets/Trello-logo.png" alt="TrelloHub Logo" class="mb-8 w-48 h-auto" />
 
-            <!-- Login title -->
             <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Log in</h2>
 
-            <!-- Form -->
+            <button @click="handleLogin">Test</button>
             <form @submit.prevent="handleLogin" class="w-full">
-                <!-- Email input -->
                 <div class="mb-6">
                     <label for="email" class="block text-lg font-medium text-gray-700">Email address</label>
                     <input type="email" id="email" v-model="email" required
@@ -34,7 +32,6 @@ const handleLogin = () => {
                         placeholder="name@example.com" />
                 </div>
 
-                <!-- Password input -->
                 <div class="mb-8">
                     <label for="password" class="block text-lg font-medium text-gray-700">Password</label>
                     <input type="password" id="password" v-model="password" required
@@ -42,7 +39,6 @@ const handleLogin = () => {
                         placeholder="••••••••" />
                 </div>
 
-                <!-- Login button -->
                 <div class="mb-6">
                     <button type="submit"
                         class="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -51,7 +47,6 @@ const handleLogin = () => {
                 </div>
             </form>
 
-            <!-- Register link -->
             <p class="text-center text-lg text-gray-600">
                 Don't have an account?
                 <router-link to="/register" class="text-blue-600 hover:underline">Register</router-link>
@@ -60,6 +55,4 @@ const handleLogin = () => {
     </div>
 </template>
 
-<style>
-/* Remove AnimXYZ and transition keyframes */
-</style>
+<style></style>

@@ -15,4 +15,9 @@ export class UsersController {
   login(@Body() loginDto: { email: string; password: string }) {
     return this.usersService.login(loginDto);
   }
+
+  @Post('checkToken')
+  checkToken(@Body() tokenDto: { token: string }) {
+    return this.usersService.checkToken(tokenDto.token);
+  }
 }

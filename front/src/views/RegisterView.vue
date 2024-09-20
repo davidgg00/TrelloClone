@@ -51,6 +51,4 @@ const handleLogin = () => {
     </div>
 </template>
 
-<style>
-/* Remove AnimXYZ and transition keyframes */
-</style>
+<style></style>
