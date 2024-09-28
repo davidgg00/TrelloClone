@@ -1,12 +1,25 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { register } from '../api/auth.api';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const email = ref<string>('');
 const password = ref<string>('');
+const name = ref<string>('');
 
-const handleLogin = () => {
-    console.log('Email:', email.value);
-    console.log('Password:', password.value);
+const handleLogin = async () => {
+    const status = await register({ 
+        name: name.value,
+        email: email.value, 
+        password: password.value 
+    });
+
+    console.log(status);
+    if(status === 201) {
+        router.push('/login')
+    }
 };
 </script>
 
@@ -20,6 +33,13 @@ const handleLogin = () => {
             <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Register</h2>
 
             <form @submit.prevent="handleLogin" class="w-full">
+
+                <div class="mb-6">
+                    <label for="name" class="block text-lg font-medium text-gray-700">Name</label>
+                    <input type="text" id="name" v-model="name" required
+                        class="mt-2 block w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                        placeholder="name@example.com" />
+                </div>
 
                 <div class="mb-6">
                     <label for="email" class="block text-lg font-medium text-gray-700">Email address</label>
@@ -38,7 +58,7 @@ const handleLogin = () => {
                 <div class="mb-6">
                     <button type="submit"
                         class="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Log in
+                        Register
                     </button>
                 </div>
             </form>

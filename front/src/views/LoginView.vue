@@ -23,7 +23,6 @@ const handleLogin = async () => {
 
             <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Log in</h2>
 
-            <button @click="handleLogin">Test</button>
             <form @submit.prevent="handleLogin" class="w-full">
                 <div class="mb-6">
                     <label for="email" class="block text-lg font-medium text-gray-700">Email address</label>

@@ -6,6 +6,11 @@ import { validToken } from "../api/auth.api";
 
 const isAuthenticated = async () => {
   const token = localStorage.getItem("token");
+
+  if (!token) {
+    return false
+  }
+
   try {
     const response = await validToken(token);
     if (response.validToken) {
@@ -36,6 +41,14 @@ const routes = [
     path: "/register",
     name: "Register",
     component: () => import("../views/RegisterView.vue"),
+    beforeEnter: async (to, from, next) => {
+      const resp = await isAuthenticated();
+      if (resp) {
+        next("/dashboard");
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/dashboard",

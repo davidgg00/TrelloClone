@@ -5,6 +5,12 @@ interface LoginData {
   password: string;
 }
 
+interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export const login = async (loginData: LoginData) => {
   try {
     const response = await api.post(`/users/login`, loginData);
@@ -24,3 +30,13 @@ export const validToken = async (token: string) => {
     throw new Error("Token validation failed");
   }
 };
+
+export const register = async (registerData: RegisterData) => {
+  try {
+    const response = await api.post(`/users`, registerData);
+    return response.status;
+  } catch (error) {
+    console.error("Register failed", error);
+    throw new Error("Register failed");
+  }
+}
