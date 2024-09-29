@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000", // TODO: ADD .env
+  baseURL: "https://trellohubback.davidguisado.dev/", // TODO: ADD .env
   headers: {
     "Content-Type": "application/json",
   },

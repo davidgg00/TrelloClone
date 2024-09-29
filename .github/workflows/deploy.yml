@@ -1,0 +1,52 @@
+name: Deploy to server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure SSH key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/id_rsa
+          chmod 600 ~/id_rsa
+
+      - name: install cloudflared
+        run: |
+          curl -L https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-archive-keyring.gpg >/dev/null
+          echo "deb [signed-by=/usr/share/keyrings/cloudflare-archive-keyring.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+          sudo apt update
+          sudo apt-get install cloudflared
+
+      - name: test cloudflared
+        run: |
+          which cloudflared
+          whereis cloudflared
+          /usr/local/bin/cloudflared --version
+
+      # Adding the Private key to a Github Actions Workflow
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: unnecessary
+          config: |
+            Host ${{ secrets.VPS_HOST }}
+              HostName ${{ secrets.VPS_HOST }}
+              User david
+              IdentityFile ~/id_rsa
+              ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
+
+      - name: SSH into VPS using Cloudflared Tunnel
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_HOST }} "cd ${{ secrets.PROJECT_PATH }} && \
+          docker-compose down || true && \
+          git pull || true && \
+          docker-compose up -d --build"
