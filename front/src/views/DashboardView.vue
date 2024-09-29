@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import Project from '../components/Project.vue';
 import { useRouter } from 'vue-router';
+import { ref, onBeforeMount } from 'vue';
+import { getBoards } from '../api/board.api';
+import { Board } from '../interfaces/Board';
 
 const router = useRouter();
 
@@ -8,10 +11,20 @@ const logOut = () => {
     localStorage.removeItem('token');
     router.push('/login');
 };
+
+const boards = ref<Board[]>();
+
+onBeforeMount(async () => {
+    try {
+        boards.value = await getBoards();
+    } catch (error) {
+        console.error('Failed to fetch boards:', error);
+    }
+});
 </script>
 
 <template>
-    <div>
+    <div class="min-h-screen flex flex-col">
         <header class="w-full h-16 bg-white shadow-md">
             <div class="flex items-center justify-between h-full px-4">
                 <div
@@ -31,21 +44,11 @@ const logOut = () => {
                 </div>
             </div>
         </header>
-        <div class="w-full h-full bg-gray-200 bg-opacity-90 p-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <Project />
-                <Project />
-                <Project />
-                <Project />
-                <Project />
-                <Project />
-                <Project />
-                <Project />
-                <Project />
-                <Project />
+        <div class="w-full h-full bg-gray-200 bg-opacity-90 p-4 flex-grow">
+            <div class="h-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <Project v-for="board in boards" :key="board.id" :board="board" />
             </div>
         </div>
-
     </div>
 </template>
 

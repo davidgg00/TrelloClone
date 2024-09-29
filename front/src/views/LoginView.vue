@@ -2,16 +2,27 @@
 import { ref } from 'vue';
 import { login } from '../api/auth.api';
 import { useRouter } from 'vue-router';
+import { toast, type ToastOptions } from 'vue3-toastify';
 
 const email = ref<string>('');
 const password = ref<string>('');
 const router = useRouter();
 
 const handleLogin = async () => {
-    const { token } = await login({ email: email.value, password: password.value });
-    localStorage.setItem('token', token);
-    router.push('/dashboard');
+    try {
+        const { token } = await login({ email: email.value, password: password.value });
+        localStorage.setItem('token', token);
+        router.push('/dashboard');
+    } catch (error: any) {
+        toast.error(error.message, {
+            autoClose: 3000,
+            position: toast.POSITION.TOP_CENTER,
+        } as ToastOptions);
+    }
+
+
 };
+
 </script>
 
 <template>
@@ -22,7 +33,6 @@ const handleLogin = async () => {
             <img src="../assets/Trello-logo.png" alt="TrelloHub Logo" class="mb-8 w-48 h-auto" />
 
             <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Log in</h2>
-
             <form @submit.prevent="handleLogin" class="w-full">
                 <div class="mb-6">
                     <label for="email" class="block text-lg font-medium text-gray-700">Email address</label>

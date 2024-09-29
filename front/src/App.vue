@@ -13,11 +13,11 @@ const endTransition = () => {
 </script>
 
 <template>
-  <div id="app" :class="{ 'no-scroll': !isTransitioning }">
-    <div class="page-wrap">
+  <div id="app" :class="{ 'no-scroll': !isTransitioning }" class="min-h-screen h-full">
+    <div class="page-wrap h-full">
       <router-view v-slot="{ Component }">
         <XyzTransition appear xyz="fade in-left-100% out-right-100%" mode="out-in" @before-enter="startTransition"
-          @leave="endTransition">
+          @leave="endTransition" class="min-h-screen">
           <component :is="Component" />
         </XyzTransition>
       </router-view>

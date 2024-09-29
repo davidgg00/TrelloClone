@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { register } from '../api/auth.api';
 import { useRouter } from 'vue-router';
+import { toast, type ToastOptions } from 'vue3-toastify';
 
 const router = useRouter();
 
@@ -10,16 +11,24 @@ const password = ref<string>('');
 const name = ref<string>('');
 
 const handleLogin = async () => {
-    const status = await register({ 
-        name: name.value,
-        email: email.value, 
-        password: password.value 
-    });
+    try {
+        const status = await register({
+            name: name.value,
+            email: email.value,
+            password: password.value
+        });
 
-    console.log(status);
-    if(status === 201) {
-        router.push('/login')
+        if (status === 201) {
+            router.push('/login')
+        }
+    } catch (error: any) {
+        toast.error(error.message, {
+            autoClose: 3000,
+            position: toast.POSITION.TOP_CENTER,
+        } as ToastOptions);
     }
+
+
 };
 </script>
 

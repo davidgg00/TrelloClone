@@ -15,9 +15,8 @@ export const login = async (loginData: LoginData) => {
   try {
     const response = await api.post(`/users/login`, loginData);
     return response.data;
-  } catch (error) {
-    console.error("Login failed", error);
-    throw new Error("Login failed");
+  } catch (error: any) {
+    throw new Error(error.response.data.message || "Login failed");
   }
 };
 
@@ -35,8 +34,7 @@ export const register = async (registerData: RegisterData) => {
   try {
     const response = await api.post(`/users`, registerData);
     return response.status;
-  } catch (error) {
-    console.error("Register failed", error);
-    throw new Error("Register failed");
+  } catch (error: any) {
+    throw new Error(error.response.data.message || "Registration failed");
   }
-}
+};
