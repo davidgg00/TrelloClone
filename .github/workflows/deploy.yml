@@ -13,6 +13,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies for backend
+        run: |
+          cd back
+          npm install
+
+      - name: Run backend tests
+        run: |
+          cd back
+          npm run test
+
       - name: Configure SSH key
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/id_rsa
