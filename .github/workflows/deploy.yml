@@ -46,7 +46,7 @@ jobs:
 
       - name: SSH into VPS using Cloudflared Tunnel
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_HOST }} "cd ${{ secrets.PROJECT_PATH }} && \
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_HOST }} "cd /mnt/mydisk/projects/TrelloClone && \
           docker-compose down || true && \
           git pull || true && \
           docker-compose up -d --build"
