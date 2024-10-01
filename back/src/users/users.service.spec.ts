@@ -105,6 +105,7 @@ describe('UsersService', () => {
     expect(mockJwtService.signAsync).toHaveBeenCalledWith({
       email: 'testuser@testuser.com',
       id: 1,
+      name: 'Test User',
     });
   });
 
