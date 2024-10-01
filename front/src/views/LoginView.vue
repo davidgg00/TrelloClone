@@ -3,15 +3,25 @@ import { ref } from 'vue';
 import { login } from '../api/auth.api';
 import { useRouter } from 'vue-router';
 import { toast, type ToastOptions } from 'vue3-toastify';
+import { useUserStore } from '../stores/user';
+import { jwtDecode } from "jwt-decode";
 
 const email = ref<string>('');
 const password = ref<string>('');
 const router = useRouter();
+const userStore = useUserStore()
 
 const handleLogin = async () => {
     try {
         const { token } = await login({ email: email.value, password: password.value });
         localStorage.setItem('token', token);
+
+        const decodedToken: any = jwtDecode(token);
+        userStore.setId(decodedToken.id);
+        userStore.setName(decodedToken.name);
+        userStore.setToken(token);
+
+
         router.push('/dashboard');
     } catch (error: any) {
         toast.error(error.message, {

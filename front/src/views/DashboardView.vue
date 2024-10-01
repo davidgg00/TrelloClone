@@ -4,15 +4,18 @@ import { useRouter } from 'vue-router';
 import { ref, onBeforeMount } from 'vue';
 import { getBoards } from '../api/board.api';
 import { Board } from '../interfaces/Board';
+import { useUserStore } from '../stores/user'
 
 const router = useRouter();
+const userStore = useUserStore();
+
+const userName = userStore.getUserName;
+const boards = ref<Board[]>();
 
 const logOut = () => {
     localStorage.removeItem('token');
     router.push('/login');
 };
-
-const boards = ref<Board[]>();
 
 onBeforeMount(async () => {
     try {
@@ -29,13 +32,13 @@ onBeforeMount(async () => {
             <div class="flex items-center justify-between h-full px-4">
                 <div
                     class="flex items-center cursor-pointer text-gray-800 hover:text-gray-600 transition duration-200 ease-in-out">
-                    <span class="text-2xl font-bold">Boards</span>
+                    <span class="text-2xl font-bold mr-16">Boards</span>
                 </div>
 
                 <img src="../assets/Trello-logo.png" alt="TrelloHub Logo" class="w-28 h-auto" />
 
                 <div class="flex items-center">
-                    <span class="text-gray-800 text-lg font-semibold">Hello, User!</span>
+                    <span class="text-gray-800 text-lg font-semibold mr-3">Hello, {{ userName }}!</span>
                     <button
                         class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         @click="logOut">
