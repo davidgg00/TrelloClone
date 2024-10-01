@@ -9,3 +9,22 @@ export const getBoards = async () => {
     throw new Error("Get boards failed");
   }
 };
+
+export const createBoard = async ({
+  title,
+  is_public,
+}: {
+  title: string;
+  is_public: boolean;
+}) => {
+  try {
+    const response = await api.post(`/boards`, {
+      title,
+      is_public,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Create board failed", error);
+    throw new Error("Create board failed");
+  }
+};
