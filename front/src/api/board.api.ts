@@ -28,3 +28,13 @@ export const createBoard = async ({
     throw new Error("Create board failed");
   }
 };
+
+export const getListsAndTasks = async (boardId: number) => {
+  try {
+    const response = await api.get(`/boards/${boardId}/lists`);
+    return response.data;
+  } catch (error) {
+    console.error("Get lists and tasks failed", error);
+    throw new Error("Get lists and tasks failed");
+  }
+};

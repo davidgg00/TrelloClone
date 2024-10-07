@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LoginView from "../views/LoginView.vue";
 import DashboardView from "../views/DashboardView.vue";
+import BoardView from "../views/BoardView.vue";
 import { validToken } from "../api/auth.api";
 
 const isAuthenticated = async () => {
@@ -53,6 +54,19 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: DashboardView,
+    beforeEnter: async (to, from, next) => {
+      const resp = await isAuthenticated();
+      if (!resp) {
+        next("/login");
+      } else {
+        next();
+      }
+    },
+  },
+  {
+    path: "/board/:id",
+    name: "Board",
+    component: BoardView,
     beforeEnter: async (to, from, next) => {
       const resp = await isAuthenticated();
       if (!resp) {

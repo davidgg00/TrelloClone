@@ -26,8 +26,9 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <ModalsContainer />
+
     <div class="min-h-screen flex flex-col">
+        <ModalsContainer />
         <Header />
         <div class="w-full h-full bg-gray-200 bg-opacity-90 p-4 flex-grow">
             <div class="flex justify-end mb-4">

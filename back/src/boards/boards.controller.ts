@@ -50,4 +50,10 @@ export class BoardsController {
   remove(@Param('id') id: string) {
     return this.boardsService.remove(+id);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/lists')
+  getListsAndTasks(@Param('id') id: string) {
+    return this.boardsService.getListsAndTasks(+id);
+  }
 }

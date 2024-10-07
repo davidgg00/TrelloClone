@@ -80,4 +80,11 @@ export class BoardsService {
       message: `Board with id ${id} deleted`,
     };
   }
+
+  async getListsAndTasks(boardId: number) {
+    return await this.boardsRepository.findOne({
+      where: { id: boardId },
+      relations: ['lists', 'lists.tasks'],
+    });
+  }
 }
