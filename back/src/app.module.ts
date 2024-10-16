@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { ListModule } from './list/list.module';
 import { TasksModule } from './tasks/tasks.module';
 import { BoardPermissionModule } from './board-permission/board-permission.module';
+import { EventsGateway } from './events/events.gateway';
+import { TasksService } from './tasks/tasks.service';
 
 @Module({
   imports: [
@@ -34,6 +36,6 @@ import { BoardPermissionModule } from './board-permission/board-permission.modul
     BoardPermissionModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EventsGateway],
 })
 export class AppModule {}

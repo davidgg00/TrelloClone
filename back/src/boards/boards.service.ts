@@ -85,6 +85,11 @@ export class BoardsService {
     return await this.boardsRepository.findOne({
       where: { id: boardId },
       relations: ['lists', 'lists.tasks'],
+      order: {
+        lists: {
+          position: 'ASC',
+        },
+      },
     });
   }
 }

@@ -1,21 +1,69 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, onMounted } from 'vue';
 import HeaderBoard from '../components/HeaderBoard.vue';
 import { getListsAndTasks } from '../api/board.api';
 import { useRouter } from 'vue-router';
 import { Board } from '../interfaces/Board';
 import List from '../components/List.vue';
+import { useSocket } from '../composables/useSocket';
+import { useDragDrop } from '../composables/useDragAndDrop';
 
 const router = useRouter();
 const board = ref<Board | null>(null);
 
-let draggedTask: { listIndex: number; taskIndex: number } | null = null;
-let draggedListIndex: number | null = null;
-const hoveredTask = ref<{ listIndex: number; taskIndex: number } | null>(null);
+const { socket, clientId } = useSocket();
+
+const { onDragStart, onListDragStart, onDragOver, onDrop, onListDrop, onDragEnd, hoveredTask } = useDragDrop(board, socket, clientId);
 
 onBeforeMount(async () => {
     const boardId: number = parseInt(router.currentRoute.value.params.id as string, 10);
     board.value = await getListsAndTasks(boardId);
+});
+
+onMounted(() => {
+    socket.value?.on('listMoved', (data) => {
+        if (data.clientId === clientId.value) {
+            return;
+        }
+
+        if (!board.value || !board.value.lists) {
+            return;
+        }
+
+        const movedListIndex = board.value.lists.findIndex(list => list.id === data.movedList.id);
+        const targetListIndex = board.value.lists.findIndex(list => list.id === data.targetList.id);
+
+        if (movedListIndex !== -1 && targetListIndex !== -1) {
+            board.value.lists.splice(movedListIndex, 1);
+            board.value.lists.splice(targetListIndex, 0, data.movedList);
+        } else {
+            console.error('Source and target lists not found');
+        }
+    });
+
+    socket.value?.on('taskMoved', (data) => {
+        if (data.clientId === clientId.value) {
+            return;
+        }
+
+        if (!board.value || !board.value.lists) {
+            return;
+        }
+
+        const sourceList = board.value.lists.find(list => list.id === data.sourceList.id);
+        const targetList = board.value.lists.find(list => list.id === data.targetList.id);
+
+        if (sourceList && targetList && sourceList.tasks && targetList.tasks) {
+            targetList.tasks.push(data.task);
+
+            const taskIndex = sourceList.tasks.findIndex(task => task.id === data.task.id);
+            if (taskIndex !== -1) {
+                sourceList.tasks.splice(taskIndex, 1);
+            }
+        } else {
+            console.error('Source and target lists not found');
+        }
+    });
 });
 
 const createNewList = () => {
@@ -23,67 +71,13 @@ const createNewList = () => {
         const newList = {
             id: Date.now(),
             title: 'Nueva Lista',
-            boardId: board.value?.id ?? 0,
+            boardId: board.value.id ?? 0,
             tasks: [],
         };
         if (board.value.lists) {
             board.value.lists.push(newList);
         }
     }
-};
-
-const onDragStart = (listIndex: number, taskIndex: number) => {
-    draggedTask = { listIndex, taskIndex };
-};
-
-const onListDragStart = (listIndex: number) => {
-    console.log('onListDragStart', listIndex);
-    draggedListIndex = listIndex;
-};
-
-const onDragOver = (listIndex: number, taskIndex?: number) => {
-    if (taskIndex !== undefined) {
-        hoveredTask.value = { listIndex, taskIndex };
-    } else {
-        hoveredTask.value = { listIndex, taskIndex: -1 };
-    }
-};
-
-const onDrop = (targetListIndex: number, targetTaskIndex?: number) => {
-    if (draggedTask && board.value?.lists) {
-        const { listIndex: sourceListIndex, taskIndex: sourceTaskIndex } = draggedTask;
-        const sourceList = board.value.lists[sourceListIndex];
-        if (sourceList?.tasks) {
-            const task = sourceList.tasks.splice(sourceTaskIndex, 1)[0];
-            if (task) {
-                const targetList = board.value.lists[targetListIndex];
-                if (targetList?.tasks) {
-                    if (targetTaskIndex === undefined || targetTaskIndex === -1) {
-                        targetList.tasks.push(task);
-                    } else {
-                        targetList.tasks.splice(targetTaskIndex, 0, task);
-                    }
-                }
-            }
-        }
-        draggedTask = null;
-    }
-    hoveredTask.value = null;
-};
-
-const onListDrop = (targetListIndex: number) => {
-    if (draggedListIndex !== null && board.value?.lists) {
-        const movedList = board.value.lists.splice(draggedListIndex, 1)[0];
-        if (movedList) {
-            board.value.lists.splice(targetListIndex, 0, movedList);
-        }
-        draggedListIndex = null;
-    }
-};
-
-const onDragEnd = () => {
-    hoveredTask.value = null;
-    draggedListIndex = null;
 };
 </script>
 

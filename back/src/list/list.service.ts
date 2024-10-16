@@ -74,6 +74,43 @@ export class ListService {
     };
   }
 
+  async updateListPositions(
+    boardId: number,
+    movedListId: number,
+    targetListId: number,
+  ): Promise<void> {
+    const lists = await this.listsRepository.find({
+      where: { boardId },
+      order: { position: 'ASC' },
+    });
+
+    let movedListIndex = -1;
+    let targetListIndex = -1;
+
+    lists.forEach((list, index) => {
+      if (list.id === movedListId) {
+        movedListIndex = index;
+      }
+      if (list.id === targetListId) {
+        targetListIndex = index;
+      }
+    });
+
+    if (movedListIndex === -1 || targetListIndex === -1) {
+      throw new Error('List not found');
+    }
+
+    const [movedList] = lists.splice(movedListIndex, 1);
+
+    lists.splice(targetListIndex, 0, movedList);
+
+    for (let i = 0; i < lists.length; i++) {
+      if (lists[i].position !== i + 1) {
+        await this.listsRepository.update(lists[i].id, { position: i + 1 });
+      }
+    }
+  }
+
   async remove(id: number) {
     const list = await this.listsRepository.findOne({
       where: { id },
