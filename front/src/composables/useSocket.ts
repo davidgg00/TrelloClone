@@ -1,15 +1,18 @@
 // src/composables/useSocket.ts
 
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onBeforeUnmount } from "vue";
 import { io, Socket } from "socket.io-client";
 
 export function useSocket() {
   const socket = ref<Socket | null>(null);
   const clientId = ref<string | null>(null);
 
-  const connect = (url: string) => {
+  const connect = (url: string, boardId: string) => {
     socket.value = io(url, {
       transports: ["websocket"],
+      query: {
+        boardId,
+      },
       withCredentials: true,
     });
 
@@ -25,10 +28,6 @@ export function useSocket() {
     }
   };
 
-  onMounted(() => {
-    connect(import.meta.env.VITE_SOCKET_URL);
-  });
-
   onBeforeUnmount(() => {
     disconnect();
   });
@@ -36,5 +35,6 @@ export function useSocket() {
   return {
     socket,
     clientId,
+    connect,
   };
 }

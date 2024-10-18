@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, onMounted } from 'vue';
+import { /* onBeforeMount, */ ref, onMounted } from 'vue';
 import HeaderBoard from '../components/HeaderBoard.vue';
 import { getListsAndTasks } from '../api/board.api';
 import { useRouter } from 'vue-router';
@@ -11,17 +11,20 @@ import { useDragDrop } from '../composables/useDragAndDrop';
 const router = useRouter();
 const board = ref<Board | null>(null);
 
-const { socket, clientId } = useSocket();
+const { socket, clientId, connect } = useSocket();
 
 const { onDragStart, onListDragStart, onDragOver, onDrop, onListDrop, onDragEnd, hoveredTask } = useDragDrop(board, socket, clientId);
 
-onBeforeMount(async () => {
+onMounted(async () => {
     const boardId: number = parseInt(router.currentRoute.value.params.id as string, 10);
     board.value = await getListsAndTasks(boardId);
-});
+    connect(import.meta.env.VITE_SOCKET_URL, boardId.toString());
+    socket.value?.onAny((event, ...args) => {
+        console.log(`Event: ${event}`, args);
+    });
 
-onMounted(() => {
     socket.value?.on('listMoved', (data) => {
+        console.log('listMoved', data);
         if (data.clientId === clientId.value) {
             return;
         }
@@ -42,6 +45,7 @@ onMounted(() => {
     });
 
     socket.value?.on('taskMoved', (data) => {
+        console.log('taskMoved', data);
         if (data.clientId === clientId.value) {
             return;
         }

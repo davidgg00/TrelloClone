@@ -33,7 +33,11 @@ export class EventsGateway
   }
 
   handleConnection(client: Socket) {
-    console.log(`Client connected: ${client.id}`);
+    client.join(client.handshake.query.boardId);
+    console.log(
+      `Client connected: ${client.id} to ${client.handshake.query.boardId}`,
+    );
+    console.log(`Rooms for client ${client.id}:`, client.rooms);
   }
 
   handleDisconnect(client: Socket) {
@@ -48,14 +52,16 @@ export class EventsGateway
       task: Task;
       targetList: List;
       sourceList: List;
+      boardId: string;
     },
     @ConnectedSocket() client: Socket,
   ) {
     await this.tasksService.update(data.task.id, {
       listId: data.targetList.id,
     });
+    console.log(data.boardId);
 
-    this.server.emit('taskMoved', {
+    this.server.to(data.boardId).emit('taskMoved', {
       task: data.task,
       targetList: data.targetList,
       clientId: data.clientId,
@@ -76,18 +82,22 @@ export class EventsGateway
   @SubscribeMessage('moveList')
   async handleMoveList(
     @MessageBody()
-    data: { clientId: any; movedList: List; targetList: List },
+    data: {
+      clientId: any;
+      movedList: List;
+      targetList: List;
+      boardId: string;
+    },
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('list moved');
-    console.log(data);
+    console.log(data.boardId);
     await this.listsService.updateListPositions(
       data.movedList.boardId,
       data.movedList.id,
       data.targetList.id,
     );
 
-    this.server.emit('listMoved', {
+    this.server.to(data.boardId).emit('listMoved', {
       movedList: data.movedList,
       targetList: data.targetList,
       clientId: data.clientId,
