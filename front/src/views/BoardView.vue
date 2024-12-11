@@ -26,12 +26,11 @@ onMounted(async () => {
         router.push('/');
     }
     connect(import.meta.env.VITE_SOCKET_URL, boardId.toString());
-    socket.value?.onAny((event, ...args) => {
+    /* socket.value?.onAny((event, ...args) => {
         console.log(`Event: ${event}`, args);
-    });
+    }); */
 
     socket.value?.on('listMoved', (data) => {
-        console.log('listMoved', data);
         if (data.clientId === clientId.value) {
             return;
         }
@@ -52,7 +51,6 @@ onMounted(async () => {
     });
 
     socket.value?.on('taskMoved', (data) => {
-        console.log('taskMoved', data);
         if (data.clientId === clientId.value) {
             return;
         }
@@ -78,7 +76,6 @@ onMounted(async () => {
 
 
     socket.value?.on('listCreated', (data) => {
-        console.log('listCreated', data);
         data.tasks = [];
         if (board.value && board.value.lists) {
             board.value.lists.push(data);
@@ -86,19 +83,15 @@ onMounted(async () => {
     });
 
     socket.value?.on('taskCreated', (data) => {
-        console.log('taskCreated', data);
         if (!board.value || !board.value.lists) {
             return;
         }
         const listIndex = board.value?.lists.findIndex(list => list.id === data.list.id);
         if (listIndex !== -1) {
-            console.log('List found');
             if (board.value && board.value.lists && board.value.lists[listIndex].tasks) {
                 board.value.lists[listIndex].tasks.push(data);
             }
         } else {
-            console.log(listIndex);
-            console.log(board.value.lists);
             console.error('List not found');
         }
     });

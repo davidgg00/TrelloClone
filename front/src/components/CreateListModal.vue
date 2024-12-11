@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { VueFinalModal } from 'vue-final-modal'
 
 const title = ref('')
-const isPublic = ref(false)
 
 defineProps<{
     titleForm?: string,

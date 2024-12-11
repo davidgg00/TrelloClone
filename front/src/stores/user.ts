@@ -33,7 +33,7 @@ export const useUserStore = defineStore("user", {
     loadUser() {
       const token = localStorage.getItem("token");
       if (token) {
-        const decodedToken = jwtDecode(token);
+        const decodedToken: any = jwtDecode(token);
         this.setToken(token);
         this.setName(decodedToken.name);
         this.setId(decodedToken.id);

@@ -27,7 +27,6 @@ const addTask = () => {
 };
 
 const saveTask = (listIndex: number) => {
-    console.log('llego!!');
     if (!newTaskTitle.value) {
         isAddingTask.value = false;
         return;
