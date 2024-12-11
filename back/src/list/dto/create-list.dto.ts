@@ -6,7 +6,7 @@ export class CreateListDto {
   title: string;
 
   @IsNumber()
-  position: number;
+  position?: number;
 
   @IsNumber()
   boardId: number;

@@ -74,9 +74,29 @@ export class EventsGateway
     @MessageBody() data: { listId: string; title: string },
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('task created');
+    const newTask = await this.tasksService.create({
+      title: data.title,
+      listId: parseInt(data.listId),
+      description: '',
+    });
 
-    this.server.emit('taskCreated', {});
+    this.server.emit('taskCreated', newTask);
+  }
+
+  @SubscribeMessage('createList')
+  async handleCreateList(
+    @MessageBody() data: { boardId: string; title: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    console.log('list created');
+    console.log(data.boardId);
+
+    const newList = await this.listsService.create({
+      title: data.title,
+      boardId: parseInt(data.boardId),
+    });
+
+    this.server.to(data.boardId.toString()).emit('listCreated', newList);
   }
 
   @SubscribeMessage('moveList')

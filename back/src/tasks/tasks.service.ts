@@ -19,8 +19,17 @@ export class TasksService {
   ) {}
 
   async create(createTaskDto: CreateTaskDto) {
-    const { title, description, position, listId, assignedUserId } =
-      createTaskDto;
+    const { title, description, listId, assignedUserId } = createTaskDto;
+
+    const maxPosition = await this.tasksRepository
+      .createQueryBuilder('task')
+      .where('task.listId = :listId', { listId })
+      .select('MAX(task.position)', 'max')
+      .getRawOne();
+
+    const position = (maxPosition?.max ?? 0) + 1;
+
+    console.log(position);
 
     const list = await this.listsRepository.findOne({ where: { id: listId } });
     if (!list) {

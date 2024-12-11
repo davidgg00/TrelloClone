@@ -31,10 +31,8 @@ export const useUserStore = defineStore("user", {
       this.token = "";
     },
     loadUser() {
-      console.log("hggello");
       const token = localStorage.getItem("token");
       if (token) {
-        console.log("chao");
         const decodedToken = jwtDecode(token);
         this.setToken(token);
         this.setName(decodedToken.name);

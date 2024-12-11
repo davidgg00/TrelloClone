@@ -16,7 +16,7 @@ export class ListService {
   ) {}
 
   async create(createListDto: CreateListDto): Promise<List> {
-    const { title, position, boardId } = createListDto;
+    const { title, boardId } = createListDto;
 
     const board = await this.boardsRepository.findOne({
       where: { id: boardId },
@@ -26,9 +26,17 @@ export class ListService {
       throw new NotFoundException(`Board with id ${boardId} not found`);
     }
 
+    const maxPosition = await this.listsRepository
+      .createQueryBuilder('list')
+      .where('list.boardId = :boardId', { boardId })
+      .select('MAX(list.position)', 'max')
+      .getRawOne();
+
+    const newPosition = (maxPosition?.max ?? 0) + 1;
+
     const newList = this.listsRepository.create({
       title,
-      position,
+      position: newPosition,
       board,
     });
 

@@ -82,7 +82,7 @@ export class BoardsService {
   }
 
   async getListsAndTasks(boardId: number) {
-    return await this.boardsRepository.findOne({
+    const board = await this.boardsRepository.findOne({
       where: { id: boardId },
       relations: ['lists', 'lists.tasks'],
       order: {
@@ -91,5 +91,11 @@ export class BoardsService {
         },
       },
     });
+
+    if (!board) {
+      throw new NotFoundException(`Board with id ${boardId} not found`);
+    }
+
+    return board;
   }
 }

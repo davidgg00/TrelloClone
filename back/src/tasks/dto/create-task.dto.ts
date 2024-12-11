@@ -12,7 +12,7 @@ export class CreateTaskDto {
   @IsNotEmpty()
   @IsInt()
   @Min(0)
-  position: number;
+  position?: number;
 
   @IsNotEmpty()
   @IsInt()
@@ -20,5 +20,5 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsInt()
-  assignedUserId: number;
+  assignedUserId?: number;
 }
