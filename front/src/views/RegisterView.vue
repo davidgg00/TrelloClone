@@ -37,7 +37,7 @@ const handleLogin = async () => {
         style="background-image: url('/path/to/your/image.jpg')">
         <div class="flex flex-col items-center bg-white bg-opacity-90 shadow-2xl rounded-2xl p-10 max-w-xl w-full">
 
-            <img src="../assets/Trello-logo.png" alt="TrelloHub Logo" class="mb-8 w-48 h-auto" />
+            <img src="../assets/Trello-logo.webp" alt="TrelloHub Logo" class="mb-8 w-48 h-auto" />
 
             <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Register</h2>
 

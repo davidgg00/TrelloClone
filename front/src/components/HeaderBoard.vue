@@ -22,7 +22,7 @@ const logOut = () => {
                 <span class="text-2xl font-bold mr-16  text-white">Boards</span>
             </div>
 
-            <img src="../assets/Trello-logo.png" alt="TrelloHub Logo" class="w-28 h-auto" />
+            <img src="../assets/Trello-logo.webp" alt="TrelloHub Logo" class="w-28 h-auto" />
 
             <div class="flex items-center">
                 <span class="text-gray-800 text-lg font-semibold mr-3  text-white">Hello, {{ userName }}!</span>
