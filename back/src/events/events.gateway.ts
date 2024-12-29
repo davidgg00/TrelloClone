@@ -99,6 +99,25 @@ export class EventsGateway
     this.server.to(data.boardId.toString()).emit('listCreated', newList);
   }
 
+  @SubscribeMessage('updateList')
+  async handleUpdateList(
+    @MessageBody()
+    data: { listId: string; title: string; boardId: string; position: number },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const updatedList = await this.listsService.update(parseInt(data.listId), {
+      title: data.title,
+      boardId: parseInt(data.listId),
+      position: data.position,
+    });
+
+    this.server.to(data.boardId.toString()).emit('listUpdated', {
+      listId: data.listId,
+      title: data.title,
+      position: data.position,
+    });
+  }
+
   @SubscribeMessage('moveList')
   async handleMoveList(
     @MessageBody()
@@ -122,5 +141,15 @@ export class EventsGateway
       targetList: data.targetList,
       clientId: data.clientId,
     });
+  }
+
+  @SubscribeMessage('deleteList')
+  async handleDeleteList(
+    @MessageBody() data: { listId: string; boardId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    await this.listsService.remove(parseInt(data.listId));
+
+    this.server.to(data.boardId.toString()).emit('listDeleted', data.listId);
   }
 }

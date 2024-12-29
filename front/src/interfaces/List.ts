@@ -5,4 +5,5 @@ export interface List {
   title: string;
   boardId: number;
   tasks?: Task[];
+  position: number;
 }

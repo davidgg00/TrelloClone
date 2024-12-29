@@ -79,6 +79,11 @@ export function useDragDrop(board: any, socket: any, clientId: any) {
           boardId: board.value.id.toString(),
         });
         board.value.lists.splice(targetListIndex, 0, movedList);
+
+        // Update positions of all lists
+        board.value.lists.forEach((list: any, index: number) => {
+          list.position = index + 1;
+        });
       }
       draggedListIndex.value = null;
     }

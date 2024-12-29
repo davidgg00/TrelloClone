@@ -26,9 +26,6 @@ onMounted(async () => {
         router.push('/');
     }
     connect(import.meta.env.VITE_SOCKET_URL, boardId.toString());
-    /* socket.value?.onAny((event, ...args) => {
-        console.log(`Event: ${event}`, args);
-    }); */
 
     socket.value?.on('listMoved', (data) => {
         if (data.clientId === clientId.value) {
@@ -45,6 +42,11 @@ onMounted(async () => {
         if (movedListIndex !== -1 && targetListIndex !== -1) {
             board.value.lists.splice(movedListIndex, 1);
             board.value.lists.splice(targetListIndex, 0, data.movedList);
+
+            // Update the position of the lists
+            board.value.lists.forEach((list, index) => {
+                list.position = index + 1;
+            });
         } else {
             console.error('Source and target lists not found');
         }
@@ -82,6 +84,16 @@ onMounted(async () => {
         }
     });
 
+    socket.value?.on('listDeleted', (data) => {
+        if (!board.value || !board.value.lists) {
+            return;
+        }
+        const listIndex = board.value.lists.findIndex(list => list.id === data);
+        if (listIndex !== -1) {
+            board.value.lists.splice(listIndex, 1);
+        }
+    });
+
     socket.value?.on('taskCreated', (data) => {
         if (!board.value || !board.value.lists) {
             return;
@@ -93,6 +105,16 @@ onMounted(async () => {
             }
         } else {
             console.error('List not found');
+        }
+    });
+
+    socket.value?.on('listUpdated', (data) => {
+        if (!board.value || !board.value.lists) {
+            return;
+        }
+        const listIndex = board.value.lists.findIndex(list => list.id === data.listId);
+        if (listIndex !== -1) {
+            board.value.lists[listIndex].title = data.title;
         }
     });
 });
@@ -125,6 +147,48 @@ const { open, close } = useModal({
         }
     },
 });
+
+const openEdit = (list: any) => {
+    const { open, close } = useModal({
+        component: CreateListModal,
+        attrs: {
+            titleForm: 'Edit list',
+            initialValues: { title: list.title },
+            onSubmit: async ({ title }) => {
+                console.log(title);
+                socket.value?.emit("updateList", {
+                    title,
+                    listId: list.id,
+                    clientId: clientId.value,
+                    boardId: board.value?.id,
+                    position: list.position,
+                });
+                const boardId: number = parseInt(router.currentRoute.value.params.id as string, 10);
+                board.value = await getListsAndTasks(boardId);
+                close(); // close the edit modal
+            }
+        },
+    })
+    open();
+};
+
+const listDelete = (listId: number) => {
+    if (!board.value?.lists) {
+        return;
+    }
+
+    const listIndex = board.value.lists.findIndex(list => list.id === listId);
+    if (listIndex !== -1) {
+        board.value.lists.splice(listIndex, 1);
+    }
+
+    socket.value?.emit('deleteList', {
+        listId,
+        clientId: clientId.value,
+        boardId: board.value.id,
+    });
+
+};
 </script>
 
 <template>
@@ -141,8 +205,10 @@ const { open, close } = useModal({
                 <List v-for="(list, listIndex) in board.lists" :key="list?.id" :list="list" :listIndex="listIndex"
                     @drag-start="onDragStart" @list-drag-start="onListDragStart" @drag-over="onDragOver"
                     @drop="onDrop(listIndex)" @list-drop="onListDrop(listIndex)" @drag-end="onDragEnd"
-                    :create-new-task="createNewTask" :hovered-task="hoveredTask" draggable="true" class="bg-white p-4 shadow-md rounded-lg border border-gray-200 hover:shadow-xl transition-shadow
-                    duration-300 flex-shrink-0 w-96 flex flex-col h-full" />
+                    @list-deleted="listDelete" :create-new-task="createNewTask" :hovered-task="hoveredTask"
+                    @edit-list="openEdit" draggable="true" class="bg-white p-4 shadow-md rounded-lg border border-gray-200 hover:shadow-xl
+                transition-shadow
+                duration-300 flex-shrink-0 w-96 flex flex-col h-full" />
             </div>
 
             <div class="flex justify-center items-center p-8">

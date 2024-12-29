@@ -2,11 +2,13 @@
 import { ref } from 'vue'
 import { VueFinalModal } from 'vue-final-modal'
 
-const title = ref('')
 
-defineProps<{
+const props = defineProps<{
     titleForm?: string,
+    initialValues?: { title: string }
 }>()
+
+const title = ref(props.initialValues?.title || '')
 
 const emit = defineEmits(['submit'])
 
