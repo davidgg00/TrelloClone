@@ -4,7 +4,7 @@ import { defineProps } from 'vue';
 import { List } from '../interfaces/List';
 import Task from './Task.vue';
 import TaskInput from './TaskInput.vue';
-import { ModalsContainer, useModal } from 'vue-final-modal';
+import { useModal } from 'vue-final-modal';
 import ConfirmModal from './ConfirmModal.vue';
 
 const props = defineProps<{

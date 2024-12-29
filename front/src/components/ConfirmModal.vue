@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { VueFinalModal } from 'vue-final-modal';
 
-const props = defineProps<{
+defineProps<{
     message: string;
     confirmText?: string;
     cancelText?: string;
